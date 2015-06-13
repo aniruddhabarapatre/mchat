@@ -4,10 +4,11 @@ if (Meteor.isClient) {
   Template.messages.messages = function() {
     return Messages.find({
 
-    }, { 
-      sort {
+    }, {
+      sort: {
         timestamp: -1
-      }, limit: 20
+      },
+      limit: 20
     });
   };
 
@@ -24,6 +25,25 @@ if (Meteor.isClient) {
       });
     }
   });
+
+  Meteor.saveMessage = function(content) {
+    var username = content.username;
+    var message = content.message;
+    if (!username || !message) { return };
+    Messages.insert({
+      username: username,
+      message: message,
+      timestamp: Date.now()
+    }, function(err, id) {
+      if (err) { 
+        alert("Houston, we have a problem!");
+      }
+      if (id) {
+        $('#newMessage').val('');
+        $('#username').val('');
+      }
+    })
+  }
 }
 
 if (Meteor.isServer) {
