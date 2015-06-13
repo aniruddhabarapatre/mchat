@@ -1,21 +1,15 @@
 Messages = new Meteor.collection("Messages");
 
 if (Meteor.isClient) {
-  // counter starts at 0
-  Session.setDefault('counter', 0);
+  Template.messages.messages = function() {
+    return Messages.find({
 
-  Template.hello.helpers({
-    counter: function () {
-      return Session.get('counter');
-    }
-  });
-
-  Template.hello.events({
-    'click button': function () {
-      // increment the counter when button is clicked
-      Session.set('counter', Session.get('counter') + 1);
-    }
-  });
+    }, { 
+      sort {
+        timestamp: -1
+      }, limit: 20
+    });
+  };
 }
 
 if (Meteor.isServer) {
