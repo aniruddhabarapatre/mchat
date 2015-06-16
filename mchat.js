@@ -1,4 +1,4 @@
-Messages = new Meteor.collection("Messages");
+Messages = new Meteor.Collection("Messages");
 
 if (Meteor.isClient) {
   Template.messages.messages = function() {
@@ -17,7 +17,7 @@ if (Meteor.isClient) {
       var message = $('#newMessage').val();
       var username = $('#username').val();
       if (!message || !username) {
-        alert('Fill out both the fields.');
+        alert('Fill out both fields yo!');
       }
       Meteor.saveMessage({
         message: message,
@@ -26,36 +26,48 @@ if (Meteor.isClient) {
     }
   });
 
+  Meteor.autorun(function() {
+    Meteor.subscribe("Messages");
+  });
+
   Meteor.saveMessage = function(content) {
     var username = content.username;
     var message = content.message;
-    if (!username || !message) { return };
+    if (!username || !message) {
+      return;
+    }
     Messages.insert({
       username: username,
       message: message,
       timestamp: Date.now()
     }, function(err, id) {
-      if (err) { 
-        alert("Houston, we have a problem!");
+      if (err) {
+        alert('Houston, we have a problem!');
       }
       if (id) {
         $('#newMessage').val('');
         $('#username').val('');
       }
-    })
-  }
+    });
+  };
+
 }
 
 if (Meteor.isServer) {
-  Meteor.startup(function () {
+  Meteor.startup(function() {
     // code to run on server at startup
+
+  });
+
+  Meteor.publish("Messages", function() {
+    return Messages.find();
   });
 
   Messages.allow({
-    'insert': function (userId, doc) {
+    'insert': function(userId, doc) {
       return true;
     },
-    'remove': function (userId, doc) {
+    'remove': function(userId, doc) {
       return false;
     }
   });
